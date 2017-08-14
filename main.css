@@ -50,3 +50,13 @@ header{
 .js-song-time{
 	float: right;
 }
+
+.js-now-playing-btn{
+	width: 50%;
+	text-align: center;
+}
+
+.js-journey-btn{
+	width: 50%;
+	text-align: center;
+}

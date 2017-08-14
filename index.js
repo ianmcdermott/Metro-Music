@@ -1,7 +1,6 @@
 const SPOTIFY_AUTHORIZE_URL = "https://accounts.spotify.com/authorize"
 const SPOTIFY_CATEGORY_URL = "https://api.spotify.com/v1/browse/categories"
-const AUTHORIZATION_CODE = "BQAxKrY4wfHMbOyXRoIKAq4lNTEHriggRid-eTPzbn4wazyDc_WiU-M3vnAmldcDOVoBDwALHgYY0SihS9MWKw";
-
+const AUTHORIZATION_CODE = "BQD00ug5rVXrlkIx653AaudEez3IZN7ihOyJPTKenTzyr4Nb2JGeVu4RMnexG7S017sxdj7t3vRKYzMKZX35SQ";
 const WMATA_DELAY_URL = "https://api.wmata.com/Incidents.svc/json/Incidents";
 const WMATA_STATIONS_URL = "https://api.wmata.com/Rail.svc/json/jStations";
 const WMATA_STATION_TO_STATION_URL = "https://api.wmata.com/Rail.svc/json/jSrcStationToDstStationInfo"
@@ -13,16 +12,25 @@ var client_id = '29c07facce49487e810599c1d0acc975'; // Your client id
 var client_secret = '68c6d1e908974c128266cf2eeba29552'; // Your secret
 var redirect_uri = 'https://www.getpostman.com/oauth2/callback'; // Your redi5rect uri
 
-let waitTime = 0;
-let tripTime = 0;
+const TRACK_IDS = [];
+const PLAYLIST = [];
+//const TRACKS = [];
+const MASTER_TRACKLIST = [];
+let playlistTime = 0;
+const playlistArray = [];
+
+let waitTime;
+let tripTime;
 let delayTime = 0;
 // 	====================================== * * * * * * WMATA API  * * * * * * ====================================== //
 //Add station names to the loc/dest options
 
 function calculateJourneyTime(fromStation, toStation){
-	getWaitTime()+getDelayTime()+getTripTime(fromStation, toStation)
-	console.log("Total Time is: " + waitTime+tripTime+delayTime);
-	return waitTime+tripTime+delayTime;
+	getWaitTime();
+	getDelayTime();
+	getTripTime(fromStation, toStation);
+	console.log("waitTime: "+ waitTime +" \n tripTime:"+ tripTime +" \n delayTime: "+ delayTime);
+	return parseInt(waitTime)+parseInt(tripTime)+parseInt(delayTime);
 }
 
 function returnStationCode(){
@@ -56,13 +64,12 @@ function getWMATAStations(callback){
 ///////// ::::: :: : : WAIT TIME CALCULATIONS : : :: :::::: /////////
 //function that returns wait time
 function getWaitTime(){
-	/*let location;
+	let location;
 	$(".js-journey-form").submit(event => {
 		location = $("#location").val();
 	});
 	//function that retrieves location's code*/
-	getWaitPredictionAPI(returnWaitTime, "A01", "B11");
-	console.log("wait time is " + waitTime);
+	return getWaitPredictionAPI(returnWaitTime, "A01", "B11");
 }
 
 //gets wait time from Predictions API
@@ -70,6 +77,7 @@ function getWaitPredictionAPI(callback, currentLocation, destination){
 	$.ajax({
 		headers: { "api_key": WMATA_KEY},			
 		url: `https://api.wmata.com/StationPrediction.svc/json/GetPrediction/${currentLocation}`,
+		async: false,
 		success: function(data){
 			callback(data, currentLocation, destination);
 		}
@@ -102,7 +110,8 @@ function getDelayPredictionAPI(callback, passengerLine){
 	const settings = {
 		headers: { "api_key": WMATA_KEY},
 		url: WMATA_DELAY_URL,
-		success: callback	
+		success: callback,
+		async: false
 	}
 	$.ajax(settings)
 }
@@ -111,7 +120,7 @@ function getDelayPredictionAPI(callback, passengerLine){
 function returnDelayTime(data, passengerLine){
 	for(let incident in data.Incidents){
 		if(passengerLine == incident.LinesAffected){
-		//	return	data.Incidents[0].PassengerDelay;
+			return 0;//	data.Incidents[0].PassengerDelay;
 		} else {
 			return 0;
 		}
@@ -121,7 +130,7 @@ function returnDelayTime(data, passengerLine){
 ///////// ::::: :: : : TRIP TIME CALCULATIONS : : :: :::::: /////////
 //function that returns length of trip
 function getTripTime(fromStation, toStation){	
-	return getTripPredictionAPI(returnTripTime, fromStation, toStation);
+	getTripPredictionAPI(returnTripTime, fromStation, toStation);
 }
 
 function getTripPredictionAPI(callback, fromStation, toStation){
@@ -129,19 +138,24 @@ function getTripPredictionAPI(callback, fromStation, toStation){
 		headers: { "api_key": WMATA_KEY },
 		url: "https://api.wmata.com/Rail.svc/json/jSrcStationToDstStationInfo",
 		q: `FromStationCode=${fromStation}&ToStationCode=${toStation}`,
-		success: callback
+		success: callback,
+		async: false
 	};
+	console.log(`from station is ${fromStation} to station is ${toStation}`);
 	$.ajax(settings)
 }
 
 //Return the Railtime of the first/only item in Station to Station Info
 function returnTripTime(data){
 	tripTime =  data.StationToStationInfos[0].RailTime;
+	direction = data.StationToStationInfos[0].RailTime;
 }
+
 //Get wait time based on destination
 function processWaitTime(data, destination){
 	for(let i = 0; i < data.Trains.lengh; i++){
 		if(data.Trains.Desination = destination){
+			//make sure wait time isn't boarding or arriving
 			if(data.Trains.Min !== "") tripTime = data.Trains.Min;
 			else return 0;			
 			break;
@@ -151,24 +165,177 @@ function processWaitTime(data, destination){
 	}
 }
 
-//currentLocation = $("#location").val();
-
-
-//gets necessary data from Spotify API
-/*function getDataFromSpotifyAPI(callback){
-	query{
-		client: “ID”,
-		response_type: “code”,
-		redirect_uri: “”,
-		state: “”,
-	}
-	$.getJSON(SPOTIFY_URL, query, callback);
+//Find 
+function findDirection(){
+	
 }
-*/
-//gets necessary data from WMATA API
+
 
 //Function that gets the Authorization
 
+
+
+
+//Function that returns client credentials authorization
+
+//Render Media Player
+
+//////////////////// ###### ###### ###### ###### ###### ###### ###### ###### ###### ////////////////////
+
+										//	SPOTIFY METHODS  //
+
+//////////////////// ###### ###### ###### ###### ###### ###### ###### ###### ###### ////////////////////
+function handleSpotify(desiredMood, totalTime){
+	let playlistIDs = getPlaylists(desiredMood, totalTime);
+	parsePlaylists();
+}
+
+//Takes user's selected category and gets the api data from the playlist
+function getPlaylists(category, time){
+	let playlistUrl = "https://api.spotify.com/v1/browse/categories/"+category+"/playlists";
+	getSpotifyPlaylist(getPlaylistItems, playlistUrl);
+	console.log(PLAYLIST);
+	PLAYLIST.forEach(item => {
+		getPlaylistTracks(getTrackIDs, item);
+	});
+}
+
+function getPlaylistTracks(callback, playlistID){
+	settings = {
+		url: `https://api.spotify.com/v1/users/Spotify/playlists/${playlistID}/tracks`,
+		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
+		success: callback,
+		async: false
+	};
+	$.ajax(settings);
+}
+
+function getTrackIDs(data){
+	for(let i = 0; i < data.items.length; i++){
+		TRACK_IDS.push(data.items[i].track.album.id);
+	};
+}
+//calls playlist API
+function getSpotifyPlaylist(callback, playlistUrl){
+	const settings = {
+		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
+		url: playlistUrl,
+		success: callback,
+		async: false
+	};
+	$.ajax(settings)
+}
+
+//returns array of playlist id's
+function getPlaylistItems(data){	
+	for(let i = 0; i < data.playlists.items.length; i++){
+		PLAYLIST.push(data.playlists.items[i].id);
+	}
+}
+
+//Handle Spotify Track API
+function getPlaylistEndpoint(callback, tracksArray){
+	const settings = {
+		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
+		url: `https://api.spotify.com/v1/users/spotify/playlists/${tracksArray}/tracks`,
+		success: callback,
+		async: false
+	};
+	$.ajax(settings);
+}
+
+//Return Array of songs
+function getSongs(data){
+	data.item.forEach(item => {
+		MASTER_TRACKLIST.push(item.track.id)
+	});
+}
+
+//take each playlist ID, put it into the get tracks API
+function parsePlaylists(){
+	const tracks = [];
+	//TRACK_IDS.forEach(item =>{
+	for(let i = 0; i< 10; i++){
+		filterTracks(TRACK_IDS[i], i);
+	
+	};
+}
+
+
+///////// ::::: :: : : PLAYLIST SORTING ALGORITHMS : : :: :::::: /////////
+//returns array of track IDs
+function filterTracks(trackID, counter){
+	//take the journey time and sort through songs until journey time is matched	
+	//if(playlistTime < totalTime * 6000 + 6000){ 
+	//while(count < 4){
+		//Filter out songs that don't match the generated key
+		if(counter < 9){
+			getAudioFeaturesEndpoint(parseKey, trackID, 10);
+	//	count++;
+		}	else {
+			getAudioFeaturesEndpoint(parseKey, trackID, 10);
+			orderSongs();
+			renderPlaylist();
+	}
+}
+function getAudioFeaturesEndpoint(callback, trackID, key){
+	settings = {
+		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
+		url: `http://api.spotify.com/v1/audio-features/${trackID}`,
+		success: function(data){
+			callback(data, key);
+		}
+	}; 
+	$.ajax(callback);
+}
+
+function parseKey(data, key){
+	if(data.key === key){
+		MASTER_TRACKLIST.push(data)
+	}
+	playlistTime+= data.duration_ms;
+	playlistArray.push(data);
+}
+
+//order songs by lowest energy to highest
+function orderSongs(){
+	let reorder = [MASTER_TRACKLIST[0].energy];
+	for(let i = 0; i < MASTER_TRACKLIST.length; i++){
+		//if the next track from the master tracklist is greater than the current one in reorder, 
+		//place as next item in reorder
+
+		if(MASTER_TRACKLIST[i+1].energy >= reorder[i])
+			reorder.append(MASTER)
+		//else place before current item in reorder
+		else {
+			let item = reorder.pop(reorder.length);
+			reorder.push(MASTER_TRACKLIST[i+1]);
+			reorder.push(item);
+		}
+	}
+	console.log(reorder);
+}
+
+
+///////// ::::: :: : : DOM RENDERING : : :: :::::: /////////
+function renderPlaylist(){
+	playlistArray.forEach(item =>{
+		$(".js-playlist").append(`
+			<div class="js-playlist-entry">
+				<p class="js-song-name">item.id</p>
+				<p class="js-song-time">${item.duration_ms/6000}</p>
+			</div>	
+		`);
+	})
+}
+
+
+///////// ::::: :: : : Menu Item Methods : : :: :::::: /////////
+//Add category names to the mood options
+function addCategoryNames(){
+	let categories = getSpotifyCategory(getCategoryID);
+	$(clearSelectionBoxes);
+}
 //Gets Category Data from Spotify API
 function getSpotifyCategory(callback){
 	const settings = {
@@ -178,28 +345,6 @@ function getSpotifyCategory(callback){
 	};
 	$.ajax(settings)
 }
-
-function getSpotifyPlaylist(playlistUrl, callback){
-	const settings = {
-		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
-		url: playlistUrl,
-		success: getPlaylistItems
-	};
-	$.ajax(settings)
-}
-
-//Function that returns client credentials authorization
-
-//Render Media Player
-
-//Add category names to the mood options
-function addCategoryNames(){
-	let categories = titleCase(getSpotifyCategory(getCategoryID));
-	$(clearSelectionBoxes);
-}
-
-//Function That retrieves wait time from WMATA API
-
 //gets playlist API based on categories
 
 function getCategoryID(data){
@@ -211,78 +356,6 @@ function getCategoryID(data){
 }
 
 
-
-function getPlaylistItems(data){
-	const playlist =  data.playlists.items;
-	return playlist;
-
-}
-
-//Function listens for submit button, runs getplaylist functions
-function handleSubmit(){
-	$(".js-journey-form").submit(event => { 
-		event.preventDefault();
-		let desiredMood = $(this).find("#mood").val(); 
-		let fromStation = $(this).find("#location").val();
-		let toStation = $(this).find("#destination").val();
-		$(calculateJourneyTime);
-		getPlaylists(desiredMood);
-		calculateJourneyTime(fromStation, toStation)
-	})
-}
-
-//Takes user's selected category and gets the api data from the playlist
-function getPlaylists(category){
-	let playlistUrl = "https://api.spotify.com/v1/browse/categories/"+category+"/playlists";
-	let plist = getSpotifyPlaylist(playlistUrl);
-	for(let i = 0; i < plist.length; i++){
-		getPlaylistTracks(plist[i].href);
-	}
-}
-//Gather the tempo, time signature, track uri for each song as you collect them
-function getPlaylistTracks(tracksArray){
-	let playlistKey =  Math.floor(Math.random(12));
-	getPlaylistEndpoint(getSongs, playlistKey);
-
-}
-//Handle Spotify Track API
-function getPlaylistEndpoint(callback, key){
-	const settings = {
-		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
-		url: `https://api.spotify.com/v1/users/spotify/playlists/${playlistID}/tracks`,
-		success: function(data){
-			callback(data, key);
-		}
-	};
-	$.ajax(settings);
-}
-
-//Return Array of songs
-function getSongs(data, key){
-	for(let item in data){
-		let trackIDs = data[i].items.track.id;
-	}
-
-	//put key into a function that parses for that key
-}
-
-function parseKey(){
-	settings = {
-		headers: {'Authorization': "Bearer "+ AUTHORIZATION_CODE},
-		url: `https://api.spotify.com/v1/audio-features/${track}`,
-		success: callback
-	}; 
-	$.ajax(callback)
-}
-
-function orderSongs(){
-
-}
-
-function handleSongs(){
-
-}
-
 function clearSelectionBoxes(){
 	$("#mood").attr("selectedIndex", -1);
 	$("#location").attr("selectedIndex", -1);
@@ -293,12 +366,24 @@ function convertToSeconds(milliseconds){
 	return milliseconds/1000;
 }
 
-function titleCase(str) {
-
+///////// ::::: :: : : Event Listeners : : :: :::::: /////////
+//Function listens for submit button, runs getplaylist functions
+function handleSubmit(){
+	$(".js-journey-form").submit(event => { 
+		event.preventDefault();
+		let desiredMood = $(this).find("#mood").val(); 
+		let fromStation = $(this).find("#location").val();
+		let toStation = $(this).find("#destination").val();
+		let totalTime = $(calculateJourneyTime(fromStation, toStation));
+		handleSpotify(desiredMood, totalTime)
+	})
 }
+
+
+
 //take total time and add songs until they equal it in duration
 
-//search through each playlist finding a random key from an array ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+//search through each playlist finding a random key, spotify labels these 0-11 ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
 //Gather the tempo, time signature, track uri for each song as you collect them
 
