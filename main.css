@@ -1,0 +1,52 @@
+html{
+	box-sizing: border-box;
+}
+
+*, *:before, *:after{
+	box-sizing: inherit;
+	font-family: "Helvetica", sans-serif;
+}
+
+.wrapper{
+	margin: auto;
+	width: 375px;
+	height: 100%;
+	position: relative;
+}
+
+main{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+label{
+	padding: 10px 5px;
+	margin: 0;
+}
+
+header{
+	background-color: #000;
+	color: #fff;
+	padding: 15px;
+	text-align: center;
+	margin: 0;
+}
+
+.js-playlist-entry{
+	border: 1px solid black;
+	width: 100%;
+	padding: 5px;
+}
+
+.js-playlist-entry p{
+	display: inline;
+}
+
+.js-song-name{
+
+}
+
+.js-song-time{
+	float: right;
+}
