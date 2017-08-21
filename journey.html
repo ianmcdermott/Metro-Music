@@ -6,18 +6,19 @@
 	<link href="main.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
-<body>
+<body onload="renderJourney();">
 	<div class="wrapper">
 		<header><h1>Metro Music</h1></header>
 
 		<main>
 			<h2>Journey Details</h2>
-			<p>A {Mood} Journey from {Location} to {Destination}</p>
-			<p>Wait Time: <span class="js-wait-time">0:00</span></p>
-			<p>Travel Time: <span class="js-travel-time">0:00</span></p>
-			<p>Delay Time: <span class="js-delay-time">0:00</span></p>
-			<a href="#" class="js-now-playing-btn">View Now Playing</a>
-			<a href="playlist.html" class="js-view-playlist-btn">View Playlist</a>
+			<p class="journey-description">A <span class="js-mood"></span> Journey from {Location} to {Destination}</p>
+			<p class="js-wait-time"></p>
+			<p class="js-trip-time"></p>
+			<p class="js-delay-time"></p>
+			<div class="js-now-playing-btn"><a href="#">View Now Playing</a></div>
+			<div class="js-view-playlist-btn"><a href="playlist.html">View Playlist</a></div>
+			<div class="js-new-journey"><a href="index.html">Plan a new Journey</a></div>
 		</main>
 		<footer><a href="/about">More about Metro Music</a></footer>
 	</div>

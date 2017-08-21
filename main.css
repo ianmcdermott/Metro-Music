@@ -12,6 +12,7 @@ html{
 	width: 375px;
 	height: 100%;
 	position: relative;
+	text-align: center;
 }
 
 main{
@@ -23,6 +24,7 @@ main{
 label{
 	padding: 10px 5px;
 	margin: 0;
+	width: 100%;
 }
 
 header{
@@ -31,6 +33,28 @@ header{
 	padding: 15px;
 	text-align: center;
 	margin: 0;
+}
+
+select{
+	height: 50px;
+	text-align: center;
+	width: 100%;
+}
+footer{
+	margin-top: 30px;
+}
+
+.submit{
+	display: block;
+	height: 50px;
+	width: 100%;
+	margin-top: 15px;
+	border-radius: 5px;
+	background-color: #D8D555;
+}
+
+.journey-description{
+	width: 80%;
 }
 
 .js-playlist-entry{
@@ -51,12 +75,17 @@ header{
 	float: right;
 }
 
-.js-now-playing-btn{
+.js-now-playing-btn, .js-journey-btn{
 	width: 50%;
 	text-align: center;
+	height: 50px;
+	background-color: #f00;
+	display: block;
+	float: left;
+	margin-top: 0;
 }
 
-.js-journey-btn{
-	width: 50%;
-	text-align: center;
+.js-now-playing-btn:hover, .js-journey-btn:hover{
+	background-color: #000;
+	color: #fff;
 }
