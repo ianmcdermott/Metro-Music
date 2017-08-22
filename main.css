@@ -42,6 +42,12 @@ select{
 }
 footer{
 	margin-top: 30px;
+	clear: both;
+	height: 40px;
+}
+
+a:hover{
+	text-decoration: none;
 }
 
 .submit{
@@ -61,6 +67,8 @@ footer{
 	border: 1px solid black;
 	width: 100%;
 	padding: 5px;
+	text-align: left;
+
 }
 
 .js-playlist-entry p{
@@ -68,24 +76,58 @@ footer{
 }
 
 .js-song-name{
-
+	text-align: left;
 }
 
 .js-song-time{
 	float: right;
 }
 
-.js-now-playing-btn, .js-journey-btn{
-	width: 50%;
-	text-align: center;
+
+.js-now-playing-btn, .js-view-playlist-btn{
+	width: 100%;
 	height: 50px;
 	background-color: #f00;
 	display: block;
-	float: left;
-	margin-top: 0;
+	/*float: left;*/
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
 }
 
-.js-now-playing-btn:hover, .js-journey-btn:hover{
+
+
+.js-new-journey-btn{
+	clear:both;
+	width: 100%;
+	height: 50px;
 	background-color: #000;
-	color: #fff;
+	display: block;
+	float: left;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
+
+.js-view-playlist{
+	padding: 0;
+}
+
+.js-now-playing-btn a:hover, .js-view-playlist-btn a:hover, .js-new-journey-btn a:hover{
+	color: #000;
+	text-decoration: none;
+	background-color: #fff;
+}
+
+.js-now-playing-btn:hover, .js-view-playlist-btn:hover, .js-new-journey-btn:hover{
+	text-decoration: none;
+	background-color: #fff;
+	color: #000;
+}
+
+.js-now-playing-btn a, .js-view-playlist-btn a, .js-new-journey-btn a{
+	color: #fff;
+	text-decoration: none;
+}
+
